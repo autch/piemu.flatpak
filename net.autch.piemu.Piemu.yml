@@ -1,0 +1,31 @@
+app-id: net.autch.piemu.Piemu
+runtime: org.freedesktop.Platform
+runtime-version: '22.08'
+sdk: org.freedesktop.Sdk
+command: piemu
+rename-desktop-file: piemu.desktop
+
+modules:
+  - shared-modules/SDL2/SDL2-2.26.1-with-libdecor.json
+  - name: piemu
+    buildsystem: cmake
+    sources:
+      - type: git
+        url: https://github.com/autch/piemu.git
+        branch: make-flatpak-happy
+    builddir: true
+  - name: piemu.desktop
+    buildsystem: simple
+    build-commands:
+      - install -D piemu.desktop /app/share/applications/piemu.desktop
+    sources:
+      - type: file
+        path: piemu.desktop
+
+finish-args:
+  - --device=all # needed for gamepads
+  - --socket=pulseaudio
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --share=ipc
+  - --filesystem=home:ro
